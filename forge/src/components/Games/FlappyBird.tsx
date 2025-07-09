@@ -25,6 +25,12 @@ const FlappyBirdGame: React.FC = () => {
                     .setOrigin(0)
                     .setDisplaySize(this.scale.width, this.scale.height);
 
+                this.scoreText = this.add.text(20, 20, "Score: 0", {
+                    fontSize: "20px",
+                    color: "#ffffff",
+                    fontFamily: "Arial"
+                });
+
                 this.bird = this.physics.add.sprite(100, this.scale.height / 2, "bird").setScale(1.2);
                 this.bird.setCollideWorldBounds(true);
                 this.bird.setGravityY(600);
@@ -45,20 +51,14 @@ const FlappyBirdGame: React.FC = () => {
                 // @ts-ignore
                 this.flapKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
-                this.scoreText = this.add.text(20, 20, "Score: 0", {
-                    fontSize: "20px",
-                    color: "#ffffff",
-                    fontFamily: "Arial"
-                });
-
-                this.playText = this.add.text(this.scale.width / 2, this.scale.height / 2, "Press P to Play", {
+                this.playText = this.add.text(this.scale.width / 2, this.scale.height / 2, "Press Space to Play", {
                     fontSize: "28px",
                     color: "#ffffff",
                     fontFamily: "Arial"
                 }).setOrigin(0.5);
 
                 // @ts-ignore
-                this.input.keyboard.on("keydown-P", () => {
+                this.input.keyboard.on("keydown-SPACE", () => {
                     if (this.isPaused) {
                         this.isPaused = false;
                         this.physics.resume();
