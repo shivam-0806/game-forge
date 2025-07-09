@@ -1,28 +1,49 @@
-import React from "react";
+import React, { useState } from "react";
 import "./GameLayout.css";
-import FlappyBirdGame from "./Games/FlappyBird.tsx";
+import FlappyBirdGame from "./Games/FlappyBird";
+import CrossyRoadGame from "./Games/Crossy Road";
 
 const GameLayout: React.FC = () => {
+    const [selectedGame, setSelectedGame] = useState("crossy");
+
+    const assetOptions: Record<string, string[]> = {
+        flappy: ["Bird", "Background", "Pipes"],
+        crossy: ["Chicken", "Car"],
+    };
+
+    const renderGame = () => {
+        switch (selectedGame) {
+            case "flappy":
+                return <FlappyBirdGame />;
+            case "crossy":
+                return <CrossyRoadGame />;
+            default:
+                return null;
+        }
+    };
+
     return (
         <div className="game-layout">
             <div className="game-window">
-                <FlappyBirdGame />
+                {renderGame()}
             </div>
 
             <div className="control-panel">
-                <select className="dropdown">
-                    <option>Flappy Bird</option>
-                    <option>Crossy Road</option>
-                    <option>Flappy Bird</option>
-                    <option>Flappy Bird</option>
+                <select
+                    className="dropdown"
+                    value={selectedGame}
+                    onChange={(e) => setSelectedGame(e.target.value)}
+                >
+                    <option value="flappy">Flappy Bird</option>
+                    <option value="crossy">Crossy Road</option>
                 </select>
 
                 <h2>AI Reskinning</h2>
 
                 <select className="dropdown">
-                    <option>Bird</option>
-                    <option>Background</option>
-                    <option>Pipes</option>
+                    {assetOptions[selectedGame].map((asset) => (
+                        <option key={asset}>{asset}</option>
+                    ))}
                 </select>
 
                 <textarea
