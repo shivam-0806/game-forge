@@ -42,6 +42,7 @@ const FlappyBirdGame: React.FC = () => {
                     this.restart();
                 });
 
+                // @ts-ignore
                 this.flapKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
                 this.scoreText = this.add.text(20, 20, "Score: 0", {
@@ -56,6 +57,7 @@ const FlappyBirdGame: React.FC = () => {
                     fontFamily: "Arial"
                 }).setOrigin(0.5);
 
+                // @ts-ignore
                 this.input.keyboard.on("keydown-P", () => {
                     if (this.isPaused) {
                         this.isPaused = false;
