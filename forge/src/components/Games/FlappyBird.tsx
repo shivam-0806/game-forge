@@ -50,13 +50,13 @@ const FlappyBirdGame: React.FC = () => {
                     fontFamily: "Arial"
                 });
 
-                this.playText = this.add.text(this.scale.width / 2, this.scale.height / 2, "Press Space to Play", {
+                this.playText = this.add.text(this.scale.width / 2, this.scale.height / 2, "Press P to Play", {
                     fontSize: "28px",
                     color: "#ffffff",
                     fontFamily: "Arial"
                 }).setOrigin(0.5);
 
-                this.input.keyboard.on("keydown-SPACE", () => {
+                this.input.keyboard.on("keydown-P", () => {
                     if (this.isPaused) {
                         this.isPaused = false;
                         this.physics.resume();
@@ -74,8 +74,10 @@ const FlappyBirdGame: React.FC = () => {
                     this.bird.setVelocityY(-250);
                 }
 
-                this.pipes.children.iterate((pipe: any) => {
-                    if (pipe.x < this.bird.x && !pipe.getData("scored")) {
+                // @ts-ignore
+                this.pipes.children.iterate((pipeObj): boolean | void => {
+                    const pipe = pipeObj as Phaser.Physics.Arcade.Image;
+                    if (pipe && pipe.x < this.bird.x && !pipe.getData("scored")) {
                         pipe.setData("scored", true);
                         this.score += 0.5;
                         this.scoreText.setText("Score: " + Math.floor(this.score));
@@ -101,7 +103,9 @@ const FlappyBirdGame: React.FC = () => {
                 bottomPipe.setOrigin(0, 0);
 
                 [topPipe, bottomPipe].forEach(pipe => {
-                    pipe.body.setAllowGravity(false);
+                    if (pipe.body && 'allowGravity' in pipe.body) {
+                        (pipe.body as Phaser.Physics.Arcade.Body).allowGravity = false;
+                    }
                     pipe.setVelocityX(-200);
                     pipe.setData("scored", false);
                 });
@@ -116,11 +120,13 @@ const FlappyBirdGame: React.FC = () => {
             }
         }
 
+        if (!gameRef.current) return;
+
         const config: Phaser.Types.Core.GameConfig = {
             type: Phaser.AUTO,
             width: 600,
             height: 500,
-            parent: gameRef.current!,
+            parent: gameRef.current,
             physics: {
                 default: "arcade",
                 arcade: {
@@ -148,7 +154,7 @@ const FlappyBirdGame: React.FC = () => {
                 height: "500px",
                 overflow: "hidden",
                 position: "relative",
-                border: "2px solid #009480",
+                border: "2px solid #0ff",
                 borderRadius: "8px"
             }}
         />
