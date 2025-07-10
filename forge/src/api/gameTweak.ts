@@ -7,7 +7,7 @@ export interface GameConfig {
 }
 import { CohereClientV2 } from "cohere-ai";
 
-const client = new CohereClientV2({ token: "KR6XAKwVIc73QlrTfKwCR4NigUjl8dvw6jdpJKmg" }); 
+const client = new CohereClientV2({ token: "{redacted}" }); 
 // const promptText = "Set gravity to 500";
 // console.log("Cohere Key:", apiKey);
 
