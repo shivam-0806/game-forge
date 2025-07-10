@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import "./GameLayout.css";
+
 import FlappyBirdGame from "./Games/FlappyBird";
 import CrossyRoadGame from "./Games/Crossy Road";
+import WhackAMoleGame from "./Games/Whack A Mole.tsx";
 
 const GameLayout: React.FC = () => {
-    const [selectedGame, setSelectedGame] = useState("crossy");
+    const [selectedGame, setSelectedGame] = useState("flappy");
 
     const assetOptions: Record<string, string[]> = {
         flappy: ["Bird", "Background", "Pipes"],
         crossy: ["Chicken", "Car"],
+        whack: ["Mole"]
     };
 
     const renderGame = () => {
@@ -17,6 +20,8 @@ const GameLayout: React.FC = () => {
                 return <FlappyBirdGame />;
             case "crossy":
                 return <CrossyRoadGame />;
+            case "whack":
+                return <WhackAMoleGame />;
             default:
                 return null;
         }
@@ -36,6 +41,7 @@ const GameLayout: React.FC = () => {
                 >
                     <option value="flappy">Flappy Bird</option>
                     <option value="crossy">Crossy Road</option>
+                    <option value="whack">Whack-a-mole</option>
                 </select>
 
                 <h2>AI Reskinning</h2>
