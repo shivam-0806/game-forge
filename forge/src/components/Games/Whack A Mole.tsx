@@ -74,7 +74,17 @@ const WhackAMoleGame: React.FC = () => {
                     .setInteractive()
                     .setDisplaySize(80, 80)
                     .setDepth(2)
-                    .on("pointerdown", () => this.whack());
+                    .on("pointerdown", () => {
+                        this.tweens.add({
+                            targets: this.mole,
+                            scaleX: 0.7,
+                            scaleY: 0.7,
+                            duration: 100,
+                            yoyo: true,
+                            ease: 'Power1',
+                            onComplete: () => this.whack()
+                        });
+                    });
 
                 this.mole.setVisible(false);
                 this.time.addEvent({
@@ -118,17 +128,7 @@ const WhackAMoleGame: React.FC = () => {
         return () => game.destroy(true);
     }, []);
 
-    return <div
-        ref={gameRef}
-        style={{
-            width: "600px",
-            height: "500px",
-            overflow: "hidden",
-            position: "relative",
-            border: "2px solid #009480",
-            borderRadius: "8px"
-        }}
-    />;
+    return <div ref={gameRef} />;
 };
 
 export default WhackAMoleGame;
