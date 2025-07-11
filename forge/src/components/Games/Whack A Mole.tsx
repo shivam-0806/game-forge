@@ -128,7 +128,18 @@ const WhackAMoleGame: React.FC = () => {
         return () => game.destroy(true);
     }, []);
 
-    return <div ref={gameRef} />;
+    return (
+        <div
+        ref={gameRef}
+        style={{
+            width: "600px",
+            height: "500px",
+            overflow: "hidden",
+            position: "relative",
+            border: "2px solid #009480",
+            borderRadius: "8px"
+        }}/>
+    );
 };
 
 export default WhackAMoleGame;
