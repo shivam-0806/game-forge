@@ -14,6 +14,11 @@ const FlappyBirdGame: React.FC = () => {
             isPaused: boolean = true;
             playText!: Phaser.GameObjects.Text;
 
+            gravity: number = 600;
+            pipeGap: number = 150;
+            pipeSpeed: number = -200;
+            flapStrength: number = 250;
+
             preload() {
                 this.load.image("bird", "/Game Assets/Flappy Bird/bird-red-sprite.png");
                 this.load.image("pipe", "/Game Assets/Flappy Bird/pipe-green.png");
@@ -33,7 +38,9 @@ const FlappyBirdGame: React.FC = () => {
 
                 this.bird = this.physics.add.sprite(100, this.scale.height / 2, "bird").setScale(1.2);
                 this.bird.setCollideWorldBounds(true);
-                this.bird.setGravityY(600);
+                this.bird.setGravityY(this.gravity);
+                // this.bird.setVelocityY(-this.flapStrength); 
+                // pipe.setVelocityX(this.pipeSpeed); 
 
                 this.pipes = this.physics.add.group();
 
@@ -73,7 +80,7 @@ const FlappyBirdGame: React.FC = () => {
                 if (this.isPaused) return;
 
                 if (Phaser.Input.Keyboard.JustDown(this.flapKey)) {
-                    this.bird.setVelocityY(-250);
+                    this.bird.setVelocityY(-this.flapStrength);
                 }
 
                 // @ts-ignore
@@ -120,6 +127,22 @@ const FlappyBirdGame: React.FC = () => {
                     this.isPaused = true;
                 });
             }
+
+            setConfig(config: Partial<{ gravity: number; pipeGap: number; pipeSpeed: number; flapStrength: number }>) {
+                if (config.gravity !== undefined) {
+                    this.gravity = config.gravity;
+                    this.bird?.setGravityY(this.gravity);
+                }
+                if (config.pipeGap !== undefined) this.pipeGap = config.pipeGap;
+                if (config.pipeSpeed !== undefined) this.pipeSpeed = config.pipeSpeed;
+                //if (config.flapStrength !== undefined) this.flapStrength = config.flapStrength;
+                if (config.flapStrength !== undefined) {
+                    this.flapStrength = config.flapStrength;
+                    // this.bird?.setVelocityY(this.flapStrength);
+                }
+                console.log("New config applied:", this.gravity, this.flapStrength, this.pipeGap, this.pipeSpeed);
+            }
+
         }
 
         if (!gameRef.current) return;
@@ -143,6 +166,15 @@ const FlappyBirdGame: React.FC = () => {
         };
 
         const game = new Phaser.Game(config);
+
+        // Expose config control globally
+        (window as any).setFlappyConfig = (cfg: any) => {
+            const scene = game.scene.keys.default as any;
+            if (scene?.setConfig) {
+                scene.setConfig(cfg);
+            }
+        };
+
         return () => {
             game.destroy(true);
         };
