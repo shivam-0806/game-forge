@@ -20,7 +20,7 @@ const FlappyBirdGame: React.FC = () => {
             flapStrength: number = 250;
 
             preload() {
-                this.load.image("bird", "/Game Assets/Flappy Bird/bird-red-sprite.png");
+                this.load.image("bird", "/Game Assets/Flappy Bird/bird.png");
                 this.load.image("pipe", "/Game Assets/Flappy Bird/pipe-green.png");
                 this.load.image("bg", "/Game Assets/Flappy Bird/background.png");
             }
@@ -170,8 +170,52 @@ const FlappyBirdGame: React.FC = () => {
         // Expose config control globally
         (window as any).setFlappyConfig = (cfg: any) => {
             const scene = game.scene.keys.default as any;
+            if (!scene){
+                console.log("scene empty, returning");
+                 return;
+            }
             if (scene?.setConfig) {
                 scene.setConfig(cfg);
+            }
+
+            // Apply sprite replacement (if a new sprite is specified)
+            // if (cfg.spriteKey && cfg.spriteUrl) {
+            //     if (scene.textures.exists(cfg.spriteKey)) {
+            //     scene.textures.remove(cfg.spriteKey);
+            //     }
+
+            //     scene.load.image(cfg.spriteKey, cfg.spriteUrl);
+            //     scene.load.once("complete", () => {
+            //     if (cfg.spriteKey === "bird" && scene.bird) {
+            //         scene.bird.setTexture(cfg.spriteKey);
+            //     }
+
+            //     // Optional: support pipe/bg/etc
+            //     });
+            const { spriteKey, spriteUrl } = cfg;
+            if (spriteKey && spriteUrl) {
+                console.log(`🎨 Replacing sprite: ${spriteKey} → ${spriteUrl}`);
+
+                // ✅ Clean up old texture (avoids glTexture crash)
+                if (scene.textures.exists(spriteKey)) {
+                scene.textures.remove(spriteKey);
+                }
+
+                // ✅ Load new texture
+                scene.load.image(spriteKey, spriteUrl);
+
+                scene.load.once("complete", () => {
+                console.log(`✅ Sprite loaded: ${spriteKey}`);
+
+                // ✅ Apply to bird, pipe, bg, etc if sprite exists
+                if (scene[spriteKey] && scene[spriteKey].setTexture) {
+                    scene[spriteKey].setTexture(spriteKey);
+                    console.log(`🚀 Applied to scene.${spriteKey}`);
+                } else {
+                    console.warn(`⚠️ No sprite instance found for key: ${spriteKey}`);
+                }
+                });
+                scene.load.start();
             }
         };
 
