@@ -153,7 +153,7 @@ const CrossyRoadGame: React.FC = () => {
                 height: "500px",
                 overflow: "hidden",
                 position: "relative",
-                border: "2px solid #ff0",
+                border: "2px solid #009480",
                 borderRadius: "8px",
             }}
         />
