@@ -188,7 +188,7 @@ const FlappyBirdGame: React.FC = () => {
                 height: "500px",
                 overflow: "hidden",
                 position: "relative",
-                border: "2px solid #0ff",
+                border: "2px solid #009480",
                 borderRadius: "8px"
             }}
         />

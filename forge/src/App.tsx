@@ -10,7 +10,7 @@ function App() {
             <div>
                 <a
                     className="github"
-                    href="https://github.com/Bunch-Of-Molecules/game-gen"
+                    href="https://github.com/Bunch-Of-Molecules/game-forge"
                     target="_blank"
                     rel="noopener noreferrer"
                 >
