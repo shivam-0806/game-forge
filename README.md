@@ -69,9 +69,8 @@ Export-ready HTML5 packages make it ideal for submissions to platforms like itch
 |-------------|---------------------|
 | Frontend    | React + Vite         |
 | Game Engine | Phaser 3             |
-| Backend     | Node.js (optional)   |
-| AI Pipeline | Hugging Face + Gradio client |
-| Hosting     | Vercel (frontend), Render (backend server) |
+| Backend     | Node.js        |
+| AI Pipeline | Google Gemini + Cohere client |
 
 ## Future Improvements
 
@@ -85,10 +84,10 @@ Export-ready HTML5 packages make it ideal for submissions to platforms like itch
 
 ### Prerequisites
 
-- Node.js (v18 or later)
+- Node.js (v20 or later)
 - Python (for local testing server, optional)
 - Git (for version control)
-- Vercel (for frontend hosting) or Render (for backend server)
+- React
 
 ### Installation
 
@@ -144,8 +143,6 @@ You can host these exports or submit them to platforms like itch.io.
 
 ## Services and APIs Used
 
-### AI Tweaking
-
 ### AI Services Used
 
 - **Cohere Command-R plus**
@@ -170,3 +167,5 @@ python -m http.server
 ```
 
 Then open `http://localhost:8000` in your browser.
+
+#### **Game Forge brings together creativity, code-free design, and AI-driven automation to make game development as intuitive as playing the game itself - whether you're a developer, a designer, or just someone with an idea and a few clicks to spare.**
