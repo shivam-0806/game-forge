@@ -11,11 +11,12 @@ const WhackAMoleGame: React.FC = () => {
             scoreText!: Phaser.GameObjects.Text;
             mole!: Phaser.GameObjects.Sprite;
             holes: Phaser.Math.Vector2[] = [];
+            spawnRate: number = 1000;
 
             preload() {
-                this.load.image("table", "/Game Assets/WhackAMole/table.png");
-                this.load.image("hole", "/Game Assets/WhackAMole/hole.png");
-                this.load.spritesheet("mole", "/Game Assets/WhackAMole/mole.png", {
+                // this.load.image("table", "/Game Assets/table.png");
+                this.load.image("hole", "/Game Assets/hole.png");
+                this.load.spritesheet("mole", "/Game Assets/mole.png", {
                     frameWidth: 80,
                     frameHeight: 80,
                 });
@@ -88,7 +89,7 @@ const WhackAMoleGame: React.FC = () => {
 
                 this.mole.setVisible(false);
                 this.time.addEvent({
-                    delay: 1000,
+                    delay: this.spawnRate,
                     callback: () => {
                         if (this.started) {
                             this.showMole();
@@ -112,6 +113,67 @@ const WhackAMoleGame: React.FC = () => {
                 this.scoreText.setText("Score: " + this.score);
                 this.mole.setVisible(false);
             }
+
+            setConfig(config: Partial<{ spawnRate: number; spriteKey: string; spriteUrl: string }>) {
+                if (config.spawnRate !== undefined) {
+                    this.spawnRate = config.spawnRate;
+
+                    // Restart the mole timer
+                    this.time.removeAllEvents();
+                    this.time.addEvent({
+                        delay: this.spawnRate,
+                        callback: () => {
+                            if (this.started) {
+                                this.showMole();
+                            } else {
+                                this.mole.setVisible(false);
+                            }
+                        },
+                        callbackScope: this,
+                        loop: true
+                    });
+                    console.log(`⏱️ Updated spawn rate: ${this.spawnRate}`);
+                }
+
+                
+                const { spriteKey, spriteUrl } = config;
+                if (!spriteKey || !spriteUrl) return;
+
+                console.log(`🎨 Replacing sprite: ${spriteKey} → ${spriteUrl}`);
+
+                let spriteInstance: Phaser.GameObjects.Sprite | null = null;
+                if (spriteKey === "mole") spriteInstance = this.mole;
+
+                if (spriteInstance?.setVisible) spriteInstance.setVisible(false);
+
+                if (this.textures.exists(spriteKey)) {
+                    this.textures.remove(spriteKey);
+                }
+
+                this.time.delayedCall(0, () => {
+                    this.load.spritesheet(spriteKey, spriteUrl, {
+                    frameWidth: 80,
+                    frameHeight: 80
+                    });
+
+                    this.load.once("complete", () => {
+                    console.log(`✅ Sprite loaded: ${spriteKey}`);
+
+                    this.time.delayedCall(50, () => {
+                        try {
+                        spriteInstance?.setTexture(spriteKey, 0); // use frame 0
+                        spriteInstance?.setVisible(true);
+                        console.log(`🚀 Applied to ${spriteKey}`);
+                        } catch (err) {
+                        console.error("🔥 setTexture failed:", err);
+                        }
+                    });
+                    });
+
+                    this.load.start();
+                });
+            }
+
         }
 
         if (!gameRef.current) return;
@@ -125,6 +187,12 @@ const WhackAMoleGame: React.FC = () => {
         };
 
         const game = new Phaser.Game(config);
+
+        (window as any).setWhackamoleConfig = (cfg: any) => {
+            const scene = game.scene.keys.default as any;
+            if (scene?.setConfig) scene.setConfig(cfg);
+        };
+
         return () => game.destroy(true);
     }, []);
 

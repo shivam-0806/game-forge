@@ -4,6 +4,11 @@ export interface GameConfig {
   // birdSpeed?: number;
   flapStrength?: number;
   pipeSpeed?: number;
+  cameraSpeed?: number;
+  jumpForce?: number;
+  moveSpeed?: number;
+  spawnRate?: number;
+  carSpeed?: number;
 }
 import { CohereClientV2 } from "cohere-ai";
 
@@ -22,7 +27,7 @@ export async function getParsedGameConfig(promptText: string): Promise<GameConfi
           "content": [
             {
               "type": "text",
-              "text": "You are an assistant that extracts game config settings from user instructions. Respond ONLY with JSON. Allowed keys: gravity, pipeGap, pipeSpeed, flapStrength."
+              "text": "You are an assistant that extracts game config settings from user instructions. Respond ONLY with JSON. Allowed keys: gravity, pipeGap, pipeSpeed, flapStrength, cameraSpeed, jumpForce, moveSpeed, carSpeed, carSpeed, spawnRate. Also, If the user says '2 times faster', set 'spawnRate': 500 (i.e. 1000 / 2). if slower then multiply"
             }
           ]
         },
@@ -57,7 +62,7 @@ export async function getParsedGameConfig(promptText: string): Promise<GameConfi
     const parsed = JSON.parse(cleanedText);
 
     // Optional: filter to only allowed keys
-    const allowedKeys: (keyof GameConfig)[] = ["gravity", "pipeSpeed", "pipeGap", "flapStrength"];
+    const allowedKeys: (keyof GameConfig)[] = ["gravity", "pipeSpeed", "pipeGap", "flapStrength", "cameraSpeed", "jumpForce", "moveSpeed", "spawnRate", "carSpeed"];
     const filtered: GameConfig = {};
 
     for (const key of allowedKeys) {

@@ -6,7 +6,7 @@ const CrossyRoadGame: React.FC = () => {
 
     useEffect(() => {
         class CrossyScene extends Phaser.Scene {
-            player!: Phaser.Physics.Arcade.Sprite;
+            chicken!: Phaser.Physics.Arcade.Sprite;
             cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
             cars!: Phaser.Physics.Arcade.Group;
             isGameOver: boolean = false;
@@ -14,11 +14,14 @@ const CrossyRoadGame: React.FC = () => {
             startText!: Phaser.GameObjects.Text;
             gameOverText!: Phaser.GameObjects.Text;
             carLanes: number[] = [];
+            carSpeed: number = 150;
+            spawnRate: number = 1000;
+
 
             preload() {
-                this.load.image("road", "/Game Assets/Crossy Road/road.png");
-                this.load.image("car", "/Game Assets/Crossy Road/car.png");
-                this.load.image("player", "/Game Assets/Crossy Road/chicken.png");
+                this.load.image("road", "/Game Assets/road.png");
+                this.load.image("car", "/Game Assets/car.png");
+                this.load.image("chicken", "/Game Assets/chicken.png");
             }
 
             create() {
@@ -26,9 +29,9 @@ const CrossyRoadGame: React.FC = () => {
                     .setOrigin(0, 0)
                     .setTileScale(1.5);
 
-                this.player = this.physics.add.sprite(this.scale.width / 2, this.scale.height - 50, "player")
+                this.chicken = this.physics.add.sprite(this.scale.width / 2, this.scale.height - 50, "chicken")
                     .setScale(0.8);
-                this.player.setCollideWorldBounds(true);
+                this.chicken.setCollideWorldBounds(true);
 
                 this.cars = this.physics.add.group();
 
@@ -36,7 +39,7 @@ const CrossyRoadGame: React.FC = () => {
                 const laneCount = Math.floor(this.scale.height / laneHeight) - 1;
                 this.carLanes = Array.from({ length: laneCount }, (_, i) => (i + 1) * laneHeight);
 
-                this.physics.add.collider(this.player, this.cars, this.handleCollision, undefined, this);
+                this.physics.add.collider(this.chicken, this.cars, this.handleCollision, undefined, this);
 
                 //@ts-ignore
                 this.cursors = this.input.keyboard.createCursorKeys();
@@ -74,22 +77,22 @@ const CrossyRoadGame: React.FC = () => {
                 if (this.isGameOver || !this.isStarted) return;
 
                 if (Phaser.Input.Keyboard.JustDown(this.cursors.up!)) {
-                    this.player.y -= 40;
+                    this.chicken.y -= 40;
                 }
                 if (Phaser.Input.Keyboard.JustDown(this.cursors.down!)) {
-                    this.player.y += 40;
+                    this.chicken.y += 40;
                 }
                 if (Phaser.Input.Keyboard.JustDown(this.cursors.left!)) {
-                    this.player.x -= 40;
+                    this.chicken.x -= 40;
                 }
                 if (Phaser.Input.Keyboard.JustDown(this.cursors.right!)) {
-                    this.player.x += 40;
+                    this.chicken.x += 40;
                 }
             }
 
             startSpawningCars() {
                 this.time.addEvent({
-                    delay: 1000,
+                    delay: this.spawnRate,
                     callback: this.spawnCar,
                     callbackScope: this,
                     loop: true,
@@ -102,7 +105,7 @@ const CrossyRoadGame: React.FC = () => {
                 const x = direction === 1 ? -50 : this.scale.width + 50;
 
                 const car = this.cars.create(x, y, "car") as Phaser.Physics.Arcade.Image;
-                car.setVelocityX(150 * direction);
+                car.setVelocityX(this.carSpeed * direction);
                 car.setScale(1.2);
                 car.setCollideWorldBounds(false);
                 car.setImmovable(true);
@@ -117,6 +120,77 @@ const CrossyRoadGame: React.FC = () => {
                 this.physics.pause();
                 this.gameOverText.setVisible(true);
             }
+
+            setConfig(config: Partial<{ carSpeed: number; spawnRate: number; spriteKey: string; spriteUrl: string }>) {
+                console.log("⚙️ Incoming config:", config);
+
+                if (config.carSpeed !== undefined) {
+                    this.carSpeed = config.carSpeed;
+                    console.log(`🚗 Updated car speed: ${this.carSpeed}`);
+                }
+
+                if (config.spawnRate !== undefined) {
+                    this.spawnRate = config.spawnRate;
+                    console.log(`⏱️ Updated spawn rate: ${this.spawnRate}`);
+
+                    // Restart timer with new rate
+                    this.time.removeAllEvents();
+                    this.time.addEvent({
+                        delay: this.spawnRate,
+                        callback: this.spawnCar,
+                        callbackScope: this,
+                        loop: true
+                    });
+                }
+
+
+                const { spriteKey, spriteUrl } = config;
+                if (!spriteKey || !spriteUrl) return;
+
+                console.log(`🎨 Replacing sprite: ${spriteKey} → ${spriteUrl}`);
+
+                let spriteInstance: Phaser.GameObjects.Sprite | Phaser.GameObjects.TileSprite | null = null;
+                if (spriteKey === "chicken") spriteInstance = this.chicken;
+                // if (spriteKey === "road") spriteInstance = this.children.getByName?.("road") || null; // or store reference
+                if (spriteKey === "car") spriteInstance = null; // car is a group
+
+                if (spriteInstance?.setVisible) spriteInstance.setVisible(false);
+
+                if (this.textures.exists(spriteKey)) {
+                    this.textures.remove(spriteKey);
+                }
+
+                this.time.delayedCall(0, () => {
+                    this.load.image(spriteKey, spriteUrl);
+
+                    this.load.once("complete", () => {
+                    console.log(`✅ Sprite loaded: ${spriteKey}`);
+
+                    this.time.delayedCall(50, () => {
+                        try {
+                        if (spriteKey === "car" && this.cars) {
+                            this.cars.children.iterate((child: any) => {
+                            child.setTexture(spriteKey);
+                            return null;
+                            });
+                            console.log("🚗 Updated all car textures");
+                        } else if (spriteInstance?.setTexture) {
+                            spriteInstance.setTexture(spriteKey);
+                            spriteInstance.setVisible(true);
+                            console.log(`🚀 Applied to ${spriteKey}`);
+                        } else {
+                            console.warn(`⚠️ No sprite instance found for key: ${spriteKey}`);
+                        }
+                        } catch (err) {
+                        console.error("🔥 setTexture failed:", err);
+                        }
+                    });
+                    });
+
+                    this.load.start();
+                });
+            }
+
         }
 
         if (!gameRef.current) return;
@@ -140,6 +214,14 @@ const CrossyRoadGame: React.FC = () => {
         };
 
         const game = new Phaser.Game(config);
+
+        (window as any).setCrossyroadConfig = (cfg: any) => {
+            spawnRate: 500
+            const scene = game.scene.keys.default as any;
+            if (scene?.setConfig) scene.setConfig(cfg);
+        };
+
+
         return () => {
             game.destroy(true);
         };

@@ -23,13 +23,13 @@ app.post("/api/reskin", async (req, res) => {
     return res.status(400).json({ error: "Missing prompt or asset" });
   }
 
-  const inputPath = `../public/Game Assets/Flappy Bird/${asset}`;
-  const outputPath = `../public/Game Assets/Flappy Bird/${asset.replace(".png", "-reskinned.png")}`;
+  const inputPath = `../public/Game Assets/${asset}`;
+  const outputPath = `../public/Game Assets/${asset.replace(".png", "-reskinned.png")}`;
 
   try {
     await generateReskin(prompt, inputPath, outputPath);
     return res.json({
-      spriteUrl: `/Game Assets/Flappy Bird/${asset.replace(".png", "-reskinned.png")}`,
+      spriteUrl: `/Game Assets/${asset.replace(".png", "-reskinned.png")}`,
     });
   } catch (err) {
     console.error("❌ Reskin error:", err);

@@ -8,10 +8,8 @@ const FlappyBirdGame: React.FC = () => {
         class FlappyScene extends Phaser.Scene {
             bird!: Phaser.Physics.Arcade.Sprite;
             pipes!: Phaser.Physics.Arcade.Group;
-            bg!: Phaser.GameObjects.Image; //change
             flapKey!: Phaser.Input.Keyboard.Key;
             score: number = 0;
-            isReady: boolean = false;
             scoreText!: Phaser.GameObjects.Text;
             isPaused: boolean = true;
             playText!: Phaser.GameObjects.Text;
@@ -22,13 +20,13 @@ const FlappyBirdGame: React.FC = () => {
             flapStrength: number = 250;
 
             preload() {
-                this.load.image("bird", "/Game Assets/bird.png");
-                this.load.image("pipe", "/Game Assets/pipe.png");
-                this.load.image("bg", "/Game Assets/background.png");
+                this.load.image("bird", "/Game Assets/Flappy Bird/bird-red-sprite.png");
+                this.load.image("pipe", "/Game Assets/Flappy Bird/pipe-green.png");
+                this.load.image("bg", "/Game Assets/Flappy Bird/background.png");
             }
 
             create() {
-                this.bg = this.add.image(0, 0, "bg")
+                this.add.image(0, 0, "bg")
                     .setOrigin(0)
                     .setDisplaySize(this.scale.width, this.scale.height);
 
@@ -76,7 +74,6 @@ const FlappyBirdGame: React.FC = () => {
                 });
 
                 this.physics.pause();
-                this.isReady = true;
             }
 
             update() {
@@ -173,73 +170,8 @@ const FlappyBirdGame: React.FC = () => {
         // Expose config control globally
         (window as any).setFlappyConfig = (cfg: any) => {
             const scene = game.scene.keys.default as any;
-            console.log("💡 Scene keys:", Object.keys(scene));
-
-            // if (!scene){
-            //     console.log("scene empty, returning");
-            //      return;
-            // }
-            if (!scene || !scene.isReady) {
-                console.warn("⏳ Scene not ready yet, delaying config...");
-                setTimeout(() => (window as any).setFlappyConfig(cfg), 100); // try again shortly
-                return;
-            }
             if (scene?.setConfig) {
                 scene.setConfig(cfg);
-            }
-
-            const { spriteKey, spriteUrl } = cfg;
-            if (spriteKey && spriteUrl) {
-                console.log(`🎨 Replacing sprite: ${spriteKey} → ${spriteUrl}`);
-
-                const spriteMap: Record<string, string> = {
-                    bird: "bird",
-                    pipe: "pipes",
-                    bg: "bg",
-                    background: "bg"  
-                };
-                const instanceName = spriteMap[spriteKey];
-                const spriteInstance = scene[instanceName];
-
-                // ✅ Hide sprite before unloading to avoid glTexture crash
-                if (spriteInstance?.setVisible) {
-                    spriteInstance.setVisible(false);
-                }
-
-                // ✅ Clean up old texture (avoids glTexture crash)
-                if (scene.textures.exists(spriteKey)) {
-                    scene.textures.remove(spriteKey);
-                }
-
-                    // ✅ Load new texture
-                scene.load.image(spriteKey, spriteUrl);
-
-                scene.load.once("complete", () => {
-                    console.log(`✅ Sprite loaded: ${spriteKey}`);
-
-                    if (spriteKey === "pipe" && scene.pipes) {
-                        scene.pipes.children.iterate((child: any) => {
-                            child.setTexture(spriteKey);
-                        });
-                        console.log(`🚀 Applied new texture to all pipes`);
-                    } else if (spriteInstance?.setTexture) {
-                        spriteInstance.setTexture(spriteKey);
-                        spriteInstance.setVisible(true);
-                        console.log(`🚀 Applied to ${instanceName}`);
-                    } else {
-                        console.warn(`⚠️ No sprite instance found for key: ${spriteKey}`);
-                    }
-                });
-
-                // // ✅ Apply to bird, pipe, bg, etc if sprite exists
-                // if (scene[spriteKey] && scene[spriteKey].setTexture) {
-                //     scene[spriteKey].setTexture(spriteKey);
-                //     console.log(`🚀 Applied to scene.${spriteKey}`);
-                // } else {
-                //     console.warn(`⚠️ No sprite instance found for key: ${spriteKey}`);
-                // }
-                // });
-                scene.load.start();
             }
         };
 
@@ -256,7 +188,7 @@ const FlappyBirdGame: React.FC = () => {
                 height: "500px",
                 overflow: "hidden",
                 position: "relative",
-                border: "2px solid #0ff",
+                border: "2px solid #009480",
                 borderRadius: "8px"
             }}
         />

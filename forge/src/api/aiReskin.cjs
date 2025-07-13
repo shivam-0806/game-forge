@@ -19,7 +19,7 @@ async function generateReskin(prompt, inputPath, outputPath)
 ): Promise<void>*/ {
   const ai = new GoogleGenAI({
     // Set your API key using env var if desired
-    apiKey: "AIzaSyCY2qnMKvrVGbA-oat_aV7kvevVEXU6uZI",//process.env.GEMINI_API_KEY,
+    apiKey: /*"AIzaSyD0PmZ539wqcpOwFt1vxfdS3c5nuhr_v2g",//*/"AIzaSyCY2qnMKvrVGbA-oat_aV7kvevVEXU6uZI",//process.env.GEMINI_API_KEY,
   });
 
   if (!fs.existsSync(inputPath)) {

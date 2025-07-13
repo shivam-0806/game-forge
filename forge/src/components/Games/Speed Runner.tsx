@@ -15,9 +15,14 @@ const SpeedRunnerSolo: React.FC = () => {
             gameOver = false;
             started = false;
 
+            gravity: number = 600;
+            // cameraSpeed: number = 150;
+            moveSpeed: number = 400;
+            jumpForce: number = 330;
+
             preload() {
-                this.load.image("tiles", "/Game Assets/Speed Runner/tiles.png");
-                this.load.spritesheet("player", "/Game Assets/Speed Runner/player.png", {
+                this.load.image("tiles", "/Game Assets/tiles.png");
+                this.load.spritesheet("player", "/Game Assets/player.png", {
                     frameWidth: 28,
                     frameHeight: 64,
                 });
@@ -135,10 +140,10 @@ const SpeedRunnerSolo: React.FC = () => {
 
                 // Movement
                 if (this.cursors.left.isDown) {
-                    this.player.setVelocityX(-400);
+                    this.player.setVelocityX(-this.moveSpeed);
                     this.player.setFlipX(true);
                 } else if (this.cursors.right.isDown) {
-                    this.player.setVelocityX(400);
+                    this.player.setVelocityX(this.moveSpeed);
                     this.player.setFlipX(false);
                 } else {
                     this.player.setVelocityX(0);
@@ -147,9 +152,9 @@ const SpeedRunnerSolo: React.FC = () => {
                 // Jump / Wall Jump
                 if (this.cursors.up.isDown) {
                     if (onGround) {
-                        this.player.setVelocityY(-330);
+                        this.player.setVelocityY(-this.jumpForce);
                     } else if ((touchingLeft || touchingRight) && this.player.getData("canWallJump")) {
-                        this.player.setVelocityY(-330);
+                        this.player.setVelocityY(-this.jumpForce);
 
                         // Push slightly away from the wall
                         if (touchingLeft) {
@@ -173,6 +178,91 @@ const SpeedRunnerSolo: React.FC = () => {
                     this.triggerGameOver();
                 }
             }
+
+            setConfig(config: Partial<{ gravity: number; cameraSpeed: number; jumpForce: number; moveSpeed: number; spriteKey: string; spriteUrl: string }>) {
+                if (config.gravity !== undefined) {
+                    this.physics.world.gravity.y = config.gravity;
+                }
+                if (config.cameraSpeed !== undefined) {
+                    this.cameraSpeed = config.cameraSpeed;
+                }
+                if (config.jumpForce !== undefined) {
+                    this.jumpForce = config.jumpForce;
+                }
+                if (config.moveSpeed !== undefined) {
+                    this.moveSpeed = config.moveSpeed;
+                }
+
+                const spriteKey = config.spriteKey;
+                const spriteUrl = config.spriteUrl;
+
+                if (!spriteKey || !spriteUrl) return;
+
+                console.log(`🎨 Replacing sprite: ${spriteKey} → ${spriteUrl}`);
+
+                const spriteMap: Record<string, Phaser.GameObjects.Sprite | null> = {
+                    player: this.player,
+                };
+
+                const spriteInstance = spriteMap[spriteKey];
+
+                if (spriteInstance?.setVisible) spriteInstance.setVisible(false);
+                if (this.textures.exists(spriteKey)) this.textures.remove(spriteKey);
+
+                // this.time.delayedCall(0, () => {
+                this.load.image(spriteKey, spriteUrl);
+
+                this.load.once("complete", () => {
+                    console.log(`✅ Sprite loaded: ${spriteKey}`);
+
+                    // this.time.delayedCall(0, () => {
+                    try {
+                        if (spriteKey === "tiles") {
+                            if (this.platforms) {
+                                this.platforms.children.iterate((child: any) => {
+                                    child.setTexture("__WHITE"); // force cleanup
+                                    return null;
+                                });
+                                this.time.delayedCall(50, () => {
+                                this.platforms.children.iterate((child: any) => {
+                                    child.setTexture(spriteKey);
+                                    child.refreshBody?.();
+                                    return null;
+                                });
+                            });
+                        }
+                            if (this.walls) {
+                                this.walls.children.iterate((child: any) => {
+                                    child.setTexture("__WHITE");
+                                    return null;
+                                });
+                                this.time.delayedCall(50, () => {
+                                this.walls.children.iterate((child: any) => {
+                                    child.setTexture(spriteKey);
+                                    child.refreshBody?.();
+                                    return null;
+                                });
+                            });
+                        }
+                            console.log(`🚀 Applied new texture to platforms and walls`);
+                        }
+                        else if(spriteInstance?.setTexture){
+                            spriteInstance.setTexture(spriteKey);
+                            spriteInstance.setVisible(true);
+                            console.log(`🚀 Applied to ${spriteKey}`);
+                        } else {
+                            console.warn(`⚠️ No sprite instance found for key: ${spriteKey}`);
+                        }
+                    } catch (err) {
+                        console.error("🔥 setTexture failed:", err);
+                    }
+                    // });
+                });
+
+                this.load.start();
+                // });
+            }
+
         }
 
         if (!gameRef.current) return;
@@ -193,6 +283,14 @@ const SpeedRunnerSolo: React.FC = () => {
         };
 
         const game = new Phaser.Game(config);
+
+        (window as any).setRunnerConfig = (cfg: any) => {
+            const scene = game.scene.keys.default as any;
+            if (scene?.setConfig) {
+                scene.setConfig(cfg);
+            }
+        };
+
         return () => game.destroy(true);
     }, []);
 
