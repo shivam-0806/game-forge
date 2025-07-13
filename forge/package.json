@@ -6,7 +6,7 @@
   "main": "src/server.cjs",
   "scripts": {
     "dev": "vite",
-    "start": "node server.cjs",
+    "start": "node src/server.cjs",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -31,5 +31,8 @@
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.34.1",
     "vite": "^7.0.0"
+  },
+  "engines": {
+    "node": "20.x"
   }
 }
