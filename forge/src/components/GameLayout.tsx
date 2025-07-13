@@ -4,11 +4,12 @@ import FlappyBirdGame from "./Games/FlappyBird";
 import CrossyRoadGame from "./Games/Crossy Road";
 import WhackAMoleGame from "./Games/Whack A Mole.tsx";
 import SpeedRunnerSolo from "./Games/Speed Runner.tsx";
+import MatchThree from "./Games/Match 3.tsx";
 import { getParsedGameConfig } from "../api/gameTweak";
 // import { generateReskin } from "../api/aiReskin";
 
 const GameLayout: React.FC = () => {
-    const [selectedGame, setSelectedGame] = useState("crossy");
+    const [selectedGame, setSelectedGame] = useState("whack");
     const [paramText, setParamText] = useState("");
     const [selectedAsset, setSelectedAsset] = useState("mole.png");
     const [reskinPrompt, setReskinPrompt] = useState("");
@@ -18,7 +19,8 @@ const GameLayout: React.FC = () => {
         flappy: ["Bird", "Background", "Pipe"],
         crossy: ["Chicken", "Car"],
         whack: ["Mole"],
-        runner: ["Player", "Tiles"]
+        runner: ["Player", "Tiles"],
+        match3: ["Tile1", "Tile2", "Tile3"]
     };
 
     const assetList = assetOptions[selectedGame] || [];
@@ -30,9 +32,13 @@ const GameLayout: React.FC = () => {
             case "crossy":
                 return <CrossyRoadGame />;
             case "whack":
+                // console.log("wackwack yayyyy");
                 return <WhackAMoleGame />;
             case "runner":
                 return <SpeedRunnerSolo />;
+            case "match3":
+                // console.log("match3 yayyyy");
+                return <MatchThree />;
             default:
                 return null;
         }
@@ -56,10 +62,13 @@ const GameLayout: React.FC = () => {
                 (window as any).setRunnerConfig?.(config);
             }
             else if (selectedGame === "whack") {
-                (window as any).setRunnerConfig?.(config);
+                (window as any).setWhackamoleConfig?.(config);
             }
             else if (selectedGame === "crossy") {
                 (window as any).setCrossyroadConfig?.(config);
+            }
+            else if (selectedGame === "match3") {
+                (window as any).setMatch3Config?.(config);
             }
             else{console.log("badha vaala error");}
         };
@@ -109,8 +118,10 @@ const GameLayout: React.FC = () => {
                 (window as any).setWhackamoleConfig?.({ spriteKey: key, spriteUrl });
             }
             else if (selectedGame === "crossy") {
-                // console.log("whackwhackwhack");
                 (window as any).setCrossyroadConfig?.({ spriteKey: key, spriteUrl });
+            }
+            else if (selectedGame === "match3") {
+                (window as any).setMatch3Config?.({ spriteKey: key, spriteUrl });
             }
 
         }
@@ -139,6 +150,7 @@ const GameLayout: React.FC = () => {
                     <option value="crossy">Crossy Road</option>
                     <option value="whack">Whack-a-mole</option>
                     <option value="runner">Speed Runner</option>
+                    <option value="match3">Simple Match Three</option>
                 </select>
 
                 <h2>AI Reskinning</h2>

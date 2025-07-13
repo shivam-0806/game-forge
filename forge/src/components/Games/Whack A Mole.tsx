@@ -115,23 +115,27 @@ const WhackAMoleGame: React.FC = () => {
             }
 
             setConfig(config: Partial<{ spawnRate: number; spriteKey: string; spriteUrl: string }>) {
+                console.log("⚙️ Incoming config:", config);
+
                 if (config.spawnRate !== undefined) {
                     this.spawnRate = config.spawnRate;
+                    console.log("updated mole spawn rate");
 
-                    // Restart the mole timer
-                    this.time.removeAllEvents();
-                    this.time.addEvent({
+                    if (this.started) {
+                        this.time.removeAllEvents();
+                        this.time.addEvent({
                         delay: this.spawnRate,
                         callback: () => {
                             if (this.started) {
-                                this.showMole();
+                            this.showMole();
                             } else {
-                                this.mole.setVisible(false);
+                            this.mole.setVisible(false);
                             }
                         },
                         callbackScope: this,
                         loop: true
-                    });
+                        });
+                    }
                     console.log(`⏱️ Updated spawn rate: ${this.spawnRate}`);
                 }
 

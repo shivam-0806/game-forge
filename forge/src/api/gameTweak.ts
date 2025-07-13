@@ -27,7 +27,7 @@ export async function getParsedGameConfig(promptText: string): Promise<GameConfi
           "content": [
             {
               "type": "text",
-              "text": "You are an assistant that extracts game config settings from user instructions. Respond ONLY with JSON. Allowed keys: gravity, pipeGap, pipeSpeed, flapStrength, cameraSpeed, jumpForce, moveSpeed, carSpeed, carSpeed, spawnRate. Also, If the user says '2 times faster', set 'spawnRate': 500 (i.e. 1000 / 2). if slower then multiply"
+              "text": "You are an assistant that extracts game config settings from user instructions. Respond ONLY with JSON. Allowed keys: gravity, pipeGap, pipeSpeed, flapStrength, cameraSpeed, jumpForce, moveSpeed, carSpeed, carSpeed, spawnRate."
             }
           ]
         },
