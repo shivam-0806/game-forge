@@ -40,6 +40,6 @@ app.listen(PORT, () => {
   console.log(`✅ AI Reskin server running at http://localhost:${PORT}`);
 });
 
-app.get("/health", (req, res) => {
+app.get("/healthz", (req, res) => {
   res.status(200).send("OK");
 });
