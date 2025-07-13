@@ -4,6 +4,9 @@ const path = require("path");
 // const { fileURLToPath } = require("url");
 const { generateReskin } = require("./api/aiReskin.cjs");
 
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
+});
 
 const app = express();
 const PORT = 3001;
