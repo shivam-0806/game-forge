@@ -4,10 +4,6 @@ const path = require("path");
 // const { fileURLToPath } = require("url");
 const { generateReskin } = require("./api/aiReskin.cjs");
 
-app.get("/health", (req, res) => {
-  res.status(200).send("OK");
-});
-
 const app = express();
 const PORT = 3001;
 
@@ -42,4 +38,8 @@ app.post("/api/reskin", async (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`✅ AI Reskin server running at http://localhost:${PORT}`);
+});
+
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
 });
