@@ -54,14 +54,8 @@ Game Forge stands out by offering AI-driven customization without financial or p
 ### Education and Learning
 Useful for introducing game development concepts in classrooms without requiring programming knowledge.
 
-### Indie Game Development
-Fast iteration for testing mechanics, themes, and art directions in small game projects.
-
 ### Thematic or Event-Based Games
 Allows custom game generation for events, festivals, and localized themes with ease.
-
-### Game Jams and Hackathons
-Export-ready HTML5 packages make it ideal for submissions to platforms like itch.io or GitHub Pages.
 
 ## Technical Stack
 
@@ -85,8 +79,7 @@ Export-ready HTML5 packages make it ideal for submissions to platforms like itch
 ### Prerequisites
 
 - Node.js (v20 or later)
-- Python (for local testing server, optional)
-- Git (for version control)
+- Python (for local server)
 - React
 
 ### Installation

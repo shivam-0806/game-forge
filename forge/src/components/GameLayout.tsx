@@ -181,7 +181,7 @@ const GameLayout: React.FC = () => {
                     onChange={(e) => setParamText(e.target.value)}
                 />
 
-                <button className="export-button" onClick={handleApplyAll}>{loading ? "Applying..." : "Export"}</button>
+                <button className="export-button" onClick={handleApplyAll}>{loading ? "Applying..." : "Apply"}</button>
             </div>
         </div>
     );
