@@ -72,7 +72,7 @@ const GameLayout: React.FC = () => {
             }
             else{console.log("badha vaala error");}
         };
-        console.log("mkcccc:  ", reskinPrompt);
+        console.log("whaaat:  ", reskinPrompt);
         // ✅ Only perform reskin if prompt is present
 
         console.log("SA::  ", selectedAsset);

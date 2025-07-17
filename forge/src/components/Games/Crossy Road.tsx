@@ -3,6 +3,11 @@ import Phaser from "phaser";
 
 const CrossyRoadGame: React.FC = () => {
     const gameRef = useRef<HTMLDivElement>(null);
+    
+    const isTyping = () => {
+        const el = document.activeElement;
+        return el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA");
+    };
 
     useEffect(() => {
         class CrossyScene extends Phaser.Scene {
@@ -18,6 +23,7 @@ const CrossyRoadGame: React.FC = () => {
             spawnRate: number = 1000;
 
 
+
             preload() {
                 this.load.image("road", "/Game Assets/road.png");
                 this.load.image("car", "/Game Assets/car.png");
@@ -25,6 +31,9 @@ const CrossyRoadGame: React.FC = () => {
             }
 
             create() {
+                this.isGameOver = false;
+                this.isStarted = false;
+                
                 this.add.tileSprite(0, 0, this.scale.width, this.scale.height, "road")
                     .setOrigin(0, 0)
                     .setTileScale(1.5);
@@ -50,14 +59,15 @@ const CrossyRoadGame: React.FC = () => {
                     fontFamily: "Arial",
                 }).setOrigin(0.5).setDepth(10).setVisible(false);
 
-                this.startText = this.add.text(this.scale.width / 2, this.scale.height / 2 - 30, "Press P to Start", {
+                this.startText = this.add.text(this.scale.width / 2, this.scale.height / 2 - 30, "Press Z to Start", {
                     fontSize: "28px",
                     color: "#fff",
                     fontFamily: "Arial",
                 }).setOrigin(0.5).setDepth(10);
 
                 //@ts-ignore
-                this.input.keyboard.on("keydown-P", () => {
+                this.input.keyboard.on("keydown-Z", () => {
+                    if (isTyping()) return;
                     if (!this.isStarted) {
                         this.isStarted = true;
                         this.startText.setVisible(false);
@@ -67,6 +77,7 @@ const CrossyRoadGame: React.FC = () => {
 
                 //@ts-ignore
                 this.input.keyboard.on("keydown-R", () => {
+                    if (isTyping()) return;
                     if (this.isGameOver) {
                         this.scene.restart();
                     }
@@ -74,6 +85,7 @@ const CrossyRoadGame: React.FC = () => {
             }
 
             update() {
+                if (isTyping()) return;
                 if (this.isGameOver || !this.isStarted) return;
 
                 if (Phaser.Input.Keyboard.JustDown(this.cursors.up!)) {
