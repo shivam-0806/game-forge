@@ -20,7 +20,7 @@ const GameLayout: React.FC = () => {
         crossy: ["Chicken", "Car"],
         whack: ["Mole"],
         runner: ["Player", "Tiles"],
-        match3: ["Tile1", "Tile2", "Tile3"]
+        match: ["Tile1", "Tile2", "Tile3"]
     };
 
     const assetList = assetOptions[selectedGame] || [];
@@ -36,8 +36,8 @@ const GameLayout: React.FC = () => {
                 return <WhackAMoleGame />;
             case "runner":
                 return <SpeedRunnerSolo />;
-            case "match3":
-                // console.log("match3 yayyyy");
+            case "match":
+                // console.log("match yayyyy");
                 return <MatchThree />;
             default:
                 return null;
@@ -67,7 +67,7 @@ const GameLayout: React.FC = () => {
             else if (selectedGame === "crossy") {
                 (window as any).setCrossyroadConfig?.(config);
             }
-            else if (selectedGame === "match3") {
+            else if (selectedGame === "match") {
                 (window as any).setMatch3Config?.(config);
             }
             else{console.log("badha vaala error");}
@@ -89,7 +89,8 @@ const GameLayout: React.FC = () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                 prompt: reskinPrompt,
-                asset: normalizedAsset
+                asset: normalizedAsset, 
+                game: selectedGame
                 })
             });
 
@@ -120,9 +121,11 @@ const GameLayout: React.FC = () => {
             else if (selectedGame === "crossy") {
                 (window as any).setCrossyroadConfig?.({ spriteKey: key, spriteUrl });
             }
-            else if (selectedGame === "match3") {
+            else if (selectedGame === "match") {
                 (window as any).setMatch3Config?.({ spriteKey: key, spriteUrl });
             }
+
+            
 
         }
     } catch (err) {
@@ -130,6 +133,13 @@ const GameLayout: React.FC = () => {
         alert("Something went wrong during export.");
     } finally {
         setLoading(false);
+
+        if (selectedGame) {
+            const gameExportKey = selectedGame === "match" ? "match" : selectedGame; // match3 → match
+            setTimeout(() => {
+                window.location.href = `http://localhost:3001/export/${gameExportKey}`;
+                }, 100);
+        }
     }
     };
 
@@ -150,7 +160,7 @@ const GameLayout: React.FC = () => {
                     <option value="crossy">Crossy Road</option>
                     <option value="whack">Whack-a-mole</option>
                     <option value="runner">Speed Runner</option>
-                    <option value="match3">Simple Match Three</option>
+                    <option value="match">Simple Match Three</option>
                 </select>
 
                 <h2>AI Reskinning</h2>
@@ -181,7 +191,8 @@ const GameLayout: React.FC = () => {
                     onChange={(e) => setParamText(e.target.value)}
                 />
 
-                <button className="export-button" onClick={handleApplyAll}>{loading ? "Applying..." : "Apply"}</button>
+                <button className="export-button" onClick={handleApplyAll}>{loading ? "Applying..." : "Export"}</button>
+
             </div>
         </div>
     );

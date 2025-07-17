@@ -11,7 +11,7 @@ const { GoogleGenAI, Modality } = require("@google/genai");
  * @param outputPath - Where to save the reskinned image
  */
 // export 
-async function generateReskin(prompt, inputPath, outputPath)
+async function generateReskin(prompt, inputPath, outputPath, exportPath)
   /*
   prompt: string,
   inputPath: string,
@@ -81,6 +81,8 @@ async function generateReskin(prompt, inputPath, outputPath)
   // ✅ Save resized image
   fs.writeFileSync(outputPath, resizedBuffer);
   console.log(`✅ Reskin saved and resized to: ${outputPath}`);
+  fs.writeFileSync(exportPath, resizedBuffer);
+  console.log(`✅ Assets exported!`);
   }
 
 module.exports = { generateReskin };

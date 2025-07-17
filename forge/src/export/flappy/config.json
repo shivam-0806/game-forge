@@ -1,0 +1,5 @@
+{
+  "birdSprite": "bird.png",
+  "gravity": 1600,
+  "flapPower": 300
+}
